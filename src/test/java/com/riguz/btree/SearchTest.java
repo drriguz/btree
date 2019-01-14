@@ -3,6 +3,7 @@ package com.riguz.btree;
 import org.junit.Before;
 import org.junit.Test;
 
+import static com.riguz.btree.BTreeTestUtil.makeNode;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -66,22 +67,5 @@ public class SearchTest {
             assertEquals(key + "", bTree.get(key));
     }
 
-    private Node<Integer, String> makeNode(int order,
-                                           Integer... keys) {
-        Node<Integer, String> node = new Node<>(order);
-        node.keyCount = keys.length;
-        node.isLeaf = true;
-        for (int i = 0; i < keys.length; i++)
-            node.entries[i] = new Entry<>(keys[i], keys[i] + "");
-        return node;
-    }
 
-    private Node<Integer, String> makeNode(int order,
-                                           Integer[] keys,
-                                           Node... pointers) {
-        Node<Integer, String> node = makeNode(order, keys);
-        node.isLeaf = false;
-        System.arraycopy(pointers, 0, node.pointers, 0, pointers.length);
-        return node;
-    }
 }
