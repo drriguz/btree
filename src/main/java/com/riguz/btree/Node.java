@@ -51,8 +51,9 @@ class Node<K extends Comparable<K>, V> {
         // move child to inserted
         for (int j = 0; j < inserted.keyCount; j++)
             inserted.keys[j] = keys[this.keyCount - inserted.keyCount + j];
-        for (int j = 0; j <= inserted.keyCount; j++)
-            inserted.children[j] = children[this.keyCount - inserted.keyCount + j];
+        if (this.isLeaf)
+            for (int j = 0; j <= inserted.keyCount; j++)
+                inserted.children[j] = children[this.keyCount - inserted.keyCount + j];
 
         // reset current node
         keyCount = keyCount - splitNodeSize - 1;
@@ -61,8 +62,8 @@ class Node<K extends Comparable<K>, V> {
         System.arraycopy(parent.keys, i, parent.keys, i + 1, parent.keyCount - i);
         System.arraycopy(parent.children, i, parent.children, i + 1, parent.keyCount + 1 - i);
         parent.keys[i] = keys[keyCount];
+        parent.children[i + 1] = inserted;
         parent.keyCount += 1;
-
         return inserted;
     }
 }

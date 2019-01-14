@@ -41,6 +41,8 @@ public class NodeTest {
         BTreeTestUtil.matchKeys(root, 'L', 'N', 'R', 'W');
         BTreeTestUtil.matchKeys(node, 'P', 'Q');
         BTreeTestUtil.matchKeys(inserted, 'S', 'T', 'U');
+        assertEquals(root.children[2], node);
+        assertEquals(root.children[3], inserted);
     }
 
     /*
@@ -74,6 +76,8 @@ public class NodeTest {
         BTreeTestUtil.matchKeys(root, 'L', 'N', 'S', 'W');
         BTreeTestUtil.matchKeys(node, 'P', 'Q', 'R');
         BTreeTestUtil.matchKeys(inserted, 'T', 'U', 'V');
+        assertEquals(root.children[2], node);
+        assertEquals(root.children[3], inserted);
     }
 
     @Test
