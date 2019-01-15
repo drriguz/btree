@@ -25,37 +25,37 @@ public class BTree<K extends Comparable<K>, V> {
         return search(node.children[i], key);
     }
 
-    /*
-       order = 8
-             ...N, W ...                    ...N, S, W ...(parent)
-                  |          ——>               /    \
-       , P, Q, R, S, T, U, V,          , P, Q, R,   , T, U, V,
-       1  2  3  4  5  6  7  8          1  2  3  4   5  6  7  8
-       (node)                          (node)       (inserted)
-              ...N, W ...                   ...N, R, W ...(parent)
-                  |          ——>               /    \
-       , P, Q, R, S, T, U,            , P, Q,     , S, T, U,
-       1  2  3  4  5  6  7            1  2  3     4  5  6  7
-       (node)                          (node)       (inserted)
-     */
-//    private void split(final Node<K, V> parent, int i, final Node<K, V> node) {
-//        final Node<K, V> inserted = new Node<>(node.order);
-//        inserted.isLeaf = node.isLeaf;
-//        inserted.keyCount = node.order / 2;
-//
-//        for (int j = 0; i < inserted.keyCount; i++)
-//            inserted.keys[j] = node.keys[j + inserted.keyCount + 1];
-//        if (!node.isLeaf) {
-//            for (int j = 0; j <= inserted.keyCount; j++)
-//                inserted.children[j] = node.children[j + inserted.keyCount + 1];
-//        }
-//        node.keyCount = node.keyCount - inserted.keyCount - 1;
-//        for (int j =)
-//    }
-
-
     public V put(final K key, final V value) {
-        return insert(null, root, key, value);
+        if (root.almostFull()) {
+            Node<K, V> node = new Node<>(root.order);
+            node.isLeaf = false;
+            node.children[0] = root;
+
+            Node<K, V> oldRoot = this.root;
+            this.root = node;
+            oldRoot.split(this.root, 0);
+            return insertNoneFull(this.root, key, value);
+        } else {
+            return insertNoneFull(this.root, key, value);
+        }
+    }
+
+    private V insertNoneFull(final Node<K, V> node, final K key, final V value) {
+        int i = 0;
+        while (i < node.keyCount && key.compareTo(node.keys[i].key) > 0)
+            i++;
+        if (i < node.keyCount && key.compareTo(node.keys[i].key) == 0) {
+            // found old value
+            final V oldValue = node.keys[i].value;
+            node.keys[i].value = value;
+            return oldValue;
+        } else {
+            for (int j = node.keyCount; j > i; j--)
+                node.keys[j] = node.keys[j - 1];
+            node.keys[i] = new Entry<>(key, value);
+            node.keyCount++;
+        }
+        return null;
     }
 
     private V insert(Node<K, V> parent, final Node<K, V> node, final K key, final V value) {

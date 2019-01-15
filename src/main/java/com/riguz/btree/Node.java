@@ -21,11 +21,15 @@ class Node<K extends Comparable<K>, V> {
         for (int i = 0; i < keyCount; i++) {
             System.out.print("," + keys[i].key);
         }
-        System.out.println();
+        System.out.println(",");
     }
 
     boolean isFull() {
         return keyCount == order;
+    }
+
+    boolean almostFull() {
+        return keyCount == order - 1;
     }
 
     /*

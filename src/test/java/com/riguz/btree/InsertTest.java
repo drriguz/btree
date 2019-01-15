@@ -10,12 +10,13 @@ import static org.junit.Assert.assertTrue;
 public class InsertTest {
     @Test
     public void insertWithoutSplit() {
-        BTree<Integer, String> tree = new BTree<>(5);
-        tree.put(1, "1");
-        tree.put(2, "2");
-        tree.put(3, "3");
-        tree.put(4, "4");
-        tree.put(5, "5");
+        BTree<Integer, String> tree = new BTree<>(6);
+        for(int i = 0; i < 5; i++){
+            tree.put(i, i + "");
+        }
+        for(int i = 0; i < 5; i++){
+            tree.put(i, i + "");
+        }
         assertEquals("1", tree.get(1));
         assertEquals("2", tree.get(2));
         assertEquals("3", tree.get(3));
