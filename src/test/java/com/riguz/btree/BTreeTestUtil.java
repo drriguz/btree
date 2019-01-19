@@ -5,11 +5,11 @@ import static org.junit.Assert.assertEquals;
 public class BTreeTestUtil {
     static <T extends Comparable<T>> Node<T, String> makeNode(int order,
                                                               T... keys) {
-        Node<T, String> node = new Node<>(order);
-        node.keyCount = keys.length;
-        node.isLeaf = true;
+        Node<T, String> node = new Node<>(new Order(order));
+        node.setKeyCount(keys.length);
+        node.setLeaf(true);
         for (int i = 0; i < keys.length; i++)
-            node.keys[i] = new Entry<>(keys[i], keys[i] + "");
+            node.setKeyAt(i, new Entry<>(keys[i], keys[i] + ""));
         return node;
     }
 
@@ -17,26 +17,27 @@ public class BTreeTestUtil {
                                                               T[] keys,
                                                               Node... pointers) {
         Node<T, String> node = makeNode(order, keys);
-        node.isLeaf = false;
-        System.arraycopy(pointers, 0, node.children, 0, pointers.length);
+        node.setLeaf(false);
+        for (int i = 0; i < pointers.length; i++)
+            node.setChildAt(i, pointers[i]);
         return node;
     }
 
     static void matchNode(Node<Integer, String> node,
                           boolean isLeaf,
                           int... keys) {
-        assertEquals(isLeaf, node.isLeaf);
-        assertEquals(keys.length, node.keyCount);
+        assertEquals(isLeaf, node.isLeaf());
+        assertEquals(keys.length, node.getKeyCount());
         for (int i = 0; i < keys.length; i++) {
-            assertEquals(keys[i], (int) node.keys[i].key);
-            assertEquals(keys[i] + "", node.keys[i].value);
+            assertEquals(keys[i], (int) node.keyAt(i));
+            assertEquals(keys[i] + "", node.valueAt(i));
         }
     }
 
     static <T extends Comparable<T>> void matchKeys(Node<T, String> node, T... keys) {
-        assertEquals(node.keyCount, keys.length);
+        assertEquals(node.getKeyCount(), keys.length);
         for (int i = 0; i < keys.length; i++) {
-            assertEquals(keys[i], node.keys[i].key);
+            assertEquals(keys[i], node.keyAt(i));
         }
     }
 }

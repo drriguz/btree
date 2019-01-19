@@ -13,7 +13,7 @@ public class SearchTest {
     @Before
     public void setup() {
         int order = 5;
-        bTree = new BTree<>(order);
+        bTree = new BTree<>(new Order(order));
         Node<Integer, String> l1 = makeNode(order,
                 1, 2, 5, 6);
         Node<Integer, String> l2 = makeNode(order,
@@ -49,7 +49,7 @@ public class SearchTest {
 
     @Test
     public void searchEmptyBtree() {
-        BTree<Integer, String> empty = new BTree<>(5);
+        BTree<Integer, String> empty = new BTree<>(new Order(5));
         assertNull(empty.get(0));
         assertNull(empty.get(-1));
         assertNull(empty.get(100));
@@ -57,7 +57,7 @@ public class SearchTest {
 
     @Test
     public void searchBtreeWithOnlyRoot() {
-        BTree<Integer, String> tree = new BTree<>(5);
+        BTree<Integer, String> tree = new BTree<>(new Order(5));
         tree.root = makeNode(5, 9, 12);
         assertNull(tree.get(0));
         assertNull(tree.get(-1));

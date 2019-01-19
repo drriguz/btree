@@ -1,20 +1,20 @@
 package com.riguz.btree;
 
 class Node<K extends Comparable<K>, V> {
-    final int order;
+    private final Order order;
 
-    boolean isLeaf;
-    int keyCount;
-    Entry<K, V>[] keys;
-    Node<K, V>[] children;
+    private boolean isLeaf;
+    private int keyCount;
+    private Entry<K, V>[] keys;
+    private Node<K, V>[] children;
 
     @SuppressWarnings("unchecked")
-    Node(int order) {
+    Node(Order order) {
         this.order = order;
         this.isLeaf = true;
         this.keyCount = 0;
-        this.keys = new Entry[order];
-        this.children = new Node[order + 1];
+        this.keys = new Entry[order.maxKeyCount()];
+        this.children = new Node[order.maxChildrenCount()];
     }
 
     void dump() {
@@ -24,12 +24,78 @@ class Node<K extends Comparable<K>, V> {
         System.out.println(",");
     }
 
-    boolean isFull() {
-        return keyCount == order;
+    Order getOrder() {
+        return order;
     }
 
-    boolean almostFull() {
-        return keyCount == order - 1;
+    boolean isLeaf() {
+        return isLeaf;
+    }
+
+    int getKeyCount() {
+        return keyCount;
+    }
+
+    void setLeaf(boolean leaf) {
+        isLeaf = leaf;
+    }
+
+    void setKeyCount(int keyCount) {
+        this.keyCount = keyCount;
+    }
+
+    boolean isFull() {
+        return keyCount == order.maxKeyCount();
+    }
+
+    void checkKeyIndex(int i) {
+        if (i < 0 || i >= keyCount)
+            throw new IllegalArgumentException("Beyond max key count (" + keyCount + "):" + i);
+    }
+
+    void checkChildrenIndex(int i) {
+        if (i < 0 || i > keyCount)
+            throw new IllegalArgumentException("Beyond max children count (" + keyCount + "):" + i);
+    }
+
+    K keyAt(int i) {
+        checkKeyIndex(i);
+        return keys[i].key;
+    }
+
+    V valueAt(int i) {
+        checkKeyIndex(i);
+        return keys[i].value;
+    }
+
+    Node<K, V> childAt(int i) {
+        checkChildrenIndex(i);
+        return children[i];
+    }
+
+    void setChildAt(int i, final Node<K, V> node) {
+        checkChildrenIndex(i);
+        children[i] = node;
+    }
+
+    void setKeyAt(int i, final Entry<K, V> key) {
+        checkKeyIndex(i);
+        keys[i] = key;
+    }
+
+    V setValue(int i, final V value) {
+        checkKeyIndex(i);
+        final V oldValue = keys[i].value;
+        keys[i].value = value;
+        return oldValue;
+    }
+
+    void insertWithoutComparing(int i, final K key, final V value) {
+        if (this.isFull())
+            throw new RuntimeException("Node is full, should not insert any value before split");
+        System.arraycopy(this.keys, i, this.keys, i + 1, this.getKeyCount() - i);
+        this.keys[i] = new Entry<>(key, value);
+        this.keyCount++;
     }
 
     /*
@@ -68,6 +134,16 @@ class Node<K extends Comparable<K>, V> {
         parent.keys[i] = keys[keyCount];
         parent.children[i + 1] = inserted;
         parent.keyCount += 1;
+
+        clean();
         return inserted;
+    }
+
+    void clean() {
+        // clean references of split node
+        for (int i = keyCount; i < order.maxKeyCount(); i++)
+            keys[i] = null;
+        for (int i = keyCount + 1; i < order.maxChildrenCount(); i++)
+            children[i] = null;
     }
 }
