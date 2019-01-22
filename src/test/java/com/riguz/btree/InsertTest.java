@@ -42,10 +42,42 @@ public class InsertTest {
     public void splitRoot() {
         BTree<Character, String> tree = new BTree<>(new Order(4));
         Character[] keys = {'A', 'B', 'C', 'D', 'E', 'F', 'G'};
-        System.out.println(tree.bfsDump());
+        //System.out.println(tree.bfsDump());
         for (Character key : keys) {
             tree.put(key, String.valueOf(key));
-            System.out.println(tree.bfsDump());
+        }
+        tree.dump();
+    }
+
+    @Test
+    public void splitLeaf() {
+        final int order = 4;
+
+        Node<Character, String> root = BTreeTestUtil.makeNode(order, 'B');
+        Node<Character, String> left = BTreeTestUtil.makeNode(order, 'A');
+        Node<Character, String> right = BTreeTestUtil.makeNode(order, 'C', 'D', 'E');
+        root.setChildAt(0, left);
+        root.setChildAt(1, right);
+        root.setLeaf(false);
+
+        BTree<Character, String> tree = new BTree<>(root);
+        tree.dump();
+
+        tree.put('F', "Bing go!");
+        tree.dump();
+        BTreeTestUtil.matchKeys(tree.root, 'B', 'D');
+        BTreeTestUtil.matchKeys(tree.root.childAt(0), 'A');
+        BTreeTestUtil.matchKeys(tree.root.childAt(1), 'C');
+        BTreeTestUtil.matchKeys(tree.root.childAt(2), 'E', 'F');
+    }
+
+    @Test
+    public void basicPutAndGet() {
+        BTree<Character, String> tree = new BTree<>(new Order(4));
+        char ch = 'A';
+        for (int i = 0; i < 26; i++) {
+            tree.put(ch++, i + "");
+            tree.dump();
         }
     }
 }
