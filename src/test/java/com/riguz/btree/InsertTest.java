@@ -73,11 +73,21 @@ public class InsertTest {
 
     @Test
     public void basicPutAndGet() {
-        BTree<Character, String> tree = new BTree<>(new Order(4));
-        char ch = 'A';
-        for (int i = 0; i < 26; i++) {
-            tree.put(ch++, i + "");
-            tree.dump();
+        BTree<Character, String> tree = BTreeTestUtil.buildTree(4,
+                "[.B.D.F.]",
+                "[,A,] [,C,] [,E,] [,G,H,]");
+        tree.put('I', "I");
+        tree.dump();
+    }
+
+    @Test
+    public void randomInsertTest() {
+        BTree<Integer, String> tree = new BTree<Integer, String>(new Order(4));
+        for (int i = 0; i < 1024; i++) {
+            tree.put(i, i + "");
+        }
+        for (int i = 0; i < 1024; i++) {
+            assertEquals(i + "", tree.get(i));
         }
     }
 }

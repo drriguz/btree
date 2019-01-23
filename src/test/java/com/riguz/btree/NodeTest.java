@@ -122,10 +122,24 @@ public class NodeTest {
     @Test
     public void splitNoneLeafRoot() {
         final int order = 4;
-        Node<Character, String> root = BTreeTestUtil.makeNode(order, 'B', 'D', 'G');
+        Node<Character, String> root = BTreeTestUtil.makeNode(order, 'B', 'D', 'F');
         Node<Character, String> c1 = BTreeTestUtil.makeNode(order, 'A');
-        Node<Character, String> c2 = BTreeTestUtil.makeNode(order, 'C', 'F');
-        Node<Character, String> c3 = BTreeTestUtil.makeNode(order, 'E', 'I');
-        Node<Character, String> c4 = BTreeTestUtil.makeNode(order, 'H');
+        Node<Character, String> c2 = BTreeTestUtil.makeNode(order, 'C');
+        Node<Character, String> c3 = BTreeTestUtil.makeNode(order, 'E');
+        Node<Character, String> c4 = BTreeTestUtil.makeNode(order, 'G', 'H');
+        root.setChildAt(0, c1);
+        root.setChildAt(1, c2);
+        root.setChildAt(2, c3);
+        root.setChildAt(3, c4);
+        root.setLeaf(false);
+        Node<Character, String> empty = new Node<>(new Order(order));
+        Node<Character, String> right = root.split(empty, 0);
+        Node<Character, String> left = root;
+        BTreeTestUtil.matchKeys(left, 'B');
+        BTreeTestUtil.matchKeys(right, 'F');
+        BTreeTestUtil.matchKeys(left.childAt(0), 'A');
+        BTreeTestUtil.matchKeys(left.childAt(1), 'C');
+        BTreeTestUtil.matchKeys(right.childAt(0), 'E');
+        BTreeTestUtil.matchKeys(right.childAt(1), 'G', 'H');
     }
 }

@@ -121,7 +121,7 @@ class Node<K extends Comparable<K>, V> {
         // move child to inserted
         for (int j = 0; j < inserted.keyCount; j++)
             inserted.keys[j] = keys[this.keyCount - inserted.keyCount + j];
-        if (this.isLeaf)
+        if (!this.isLeaf)
             for (int j = 0; j <= inserted.keyCount; j++)
                 inserted.children[j] = children[this.keyCount - inserted.keyCount + j];
 
